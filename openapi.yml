@@ -1,0 +1,110 @@
+openapi: 3.0.3
+info:
+  title: API
+  version: 0.1.0
+paths:
+  /clusters/:
+    get:
+      operationId: listClusters
+      responses:
+        default: {$ref: '#/components/responses/Error'}
+        '200':
+          description: List of clusters
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Cluster'
+    post:
+      operationId: createCluster
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Cluster'
+      responses:
+        default: {$ref: '#/components/responses/Error'}
+        '200':
+          description: Created cluster
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cluster'
+  /clusters/{cluster_id}:
+    get:
+      operationId: getCluster
+      parameters:
+        - $ref: '#/components/parameters/ClusterID'
+      responses:
+        default: {$ref: '#/components/responses/Error'}
+        '200':
+          description: Cluster
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cluster'
+    put:
+      operationId: updateCluster
+      parameters:
+        - $ref: '#/components/parameters/ClusterID'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Cluster'
+      responses:
+        default: {$ref: '#/components/responses/Error'}
+        '200':
+          description: Updated cluster
+    delete:
+      operationId: deleteCluster
+      parameters:
+        - $ref: '#/components/parameters/ClusterID'
+      responses:
+        default: {$ref: '#/components/responses/Error'}
+        '200':
+          description: Deleted cluster
+
+components:
+  parameters:
+    ClusterID:
+      name: cluster_id
+      in: path
+      description: Cluster ID
+      required: true
+      schema:
+        type: string
+        format: uuid
+  schemas:
+    Cluster:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string
+          format: uuid
+    Error:
+      title: Structured error
+      description: Error occurred while processing request
+      type: object
+      required:
+        - error_message
+      properties:
+        error_message:
+          type: string
+          description: "Human-readable error message"
+          example: "Something went wrong"
+
+  responses:
+    Error:
+      description: Structured error response.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+servers:
+  - url: http://127.0.0.1:8501
