@@ -57,6 +57,18 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				break
 			}
 
+			if len(elem) == 0 {
+				switch r.Method {
+				case "GET":
+					s.handleListClustersRequest([0]string{}, elemIsEscaped, w, r)
+				case "POST":
+					s.handleCreateClusterRequest([0]string{}, elemIsEscaped, w, r)
+				default:
+					s.notAllowed(w, r, "GET,POST")
+				}
+
+				return
+			}
 			// Param: "cluster_id"
 			// Leaf parameter
 			args[0] = elem
